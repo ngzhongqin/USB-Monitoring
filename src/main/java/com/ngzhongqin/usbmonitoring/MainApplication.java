@@ -5,8 +5,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 public class MainApplication extends Application {
     @Override
@@ -21,8 +23,26 @@ public class MainApplication extends Application {
     }
 
     public static void main(String[] args) {
-        waitForNotifying();
+//        waitForNotifying();
+        setIcon();
         launch();
+    }
+
+    private static void setIcon(){
+        try {
+            //loading an image from a file
+            final Toolkit defaultToolkit = Toolkit.getDefaultToolkit();
+            final URL imageResource = MainApplication.class.getResource("/icon.png");
+            final Image image = defaultToolkit.getImage(imageResource);
+            //this is new since JDK 9
+            final Taskbar taskbar = Taskbar.getTaskbar();
+            //set icon for mac os (and other systems which do support this method)
+            taskbar.setIconImage(image);
+        } catch (final UnsupportedOperationException e) {
+            System.out.println("The os does not support: 'taskbar.setIconImage'");
+        } catch (final SecurityException e) {
+            System.out.println("There was a security exception for: 'taskbar.setIconImage'");
+        }
     }
 
     static File[] oldListRoot = File.listRoots();
